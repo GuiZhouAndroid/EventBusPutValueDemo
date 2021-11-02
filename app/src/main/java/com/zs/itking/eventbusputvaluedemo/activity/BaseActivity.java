@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.zs.itking.eventbusputvaluedemo.base.eventbus.GlobalBus;
+
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -45,7 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public void initRegisterEventBus(Boolean state) {
         if (state) {
-            EventBus.getDefault().register(this);
+            GlobalBus.getBus().register(this);
         }
     }
 

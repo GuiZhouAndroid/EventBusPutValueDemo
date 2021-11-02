@@ -1,17 +1,14 @@
 package com.zs.itking.eventbusputvaluedemo.activity;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.zs.itking.eventbusputvaluedemo.MyShop;
 import com.zs.itking.eventbusputvaluedemo.R;
-import com.zs.itking.eventbusputvaluedemo.base.AnyEventType;
+import com.zs.itking.eventbusputvaluedemo.base.eventbus.Events;
+import com.zs.itking.eventbusputvaluedemo.base.eventbus.GlobalBus;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * created by on 2021/11/2
@@ -22,10 +19,11 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public class TwoActivity extends BaseActivity {
 
-    private static String data = "这是来自TwoActivity的返回数据";
+    private static String data = "我是TwoActivity传到MainActivity的数据";
 
     TextView tv_two_text;
-    private static AnyEventType anyEventType;
+
+    private static Events.ActivityActivityMessage activityActivityMessage;
     @Override
     public int bindLayout() {
         return R.layout.activity_two;
@@ -44,21 +42,23 @@ public class TwoActivity extends BaseActivity {
     @Override
     protected void initData(Bundle savedInstanceState) {
         /* 1.本类实体对象数据库，设置到TextView上 */
-        if(anyEventType != null){
-            tv_two_text.setText(anyEventType.getMsg());
+        if(activityActivityMessage != null){
+            tv_two_text.setText(activityActivityMessage.getMessage());
         }
         /* 2.TwoActivity向MainActivity发送串字符串文本数据 */
-        EventBus.getDefault().post(data);
+        GlobalBus.getBus().post(data);
     }
 
-
+    /**
+     * 接收Events.ActivityActivityMessage类型事件
+     * @param message
+     */
     @Subscribe(sticky = true)
-    public void onEventMainThread(AnyEventType event) {
+    public void onEventMainThread(Events.ActivityActivityMessage message) {
         //接收MainActivity事件携带的实体数据，赋值给我本来的实体对象
-        if (event != null) {
-            anyEventType = event;
+        if (message != null) {
+            activityActivityMessage = message;
         }
     }
-
 }
 
