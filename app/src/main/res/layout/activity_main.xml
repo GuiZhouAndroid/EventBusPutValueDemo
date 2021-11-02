@@ -13,7 +13,7 @@
     <Button
         android:onClick="but"
         android:layout_width="match_parent"
-        android:text="put data"
+        android:text="开始传递数据"
         android:layout_height="wrap_content" />
 
     <TextView
