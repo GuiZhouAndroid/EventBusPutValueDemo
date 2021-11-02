@@ -14,6 +14,7 @@ import com.zs.itking.eventbusputvaluedemo.R;
 import com.zs.itking.eventbusputvaluedemo.adapter.MyViewPagerAdapter;
 import com.zs.itking.eventbusputvaluedemo.base.eventbus.Events;
 import com.zs.itking.eventbusputvaluedemo.base.eventbus.GlobalBus;
+import com.zs.itking.eventbusputvaluedemo.fragment.FourFragment;
 import com.zs.itking.eventbusputvaluedemo.fragment.OneFragment;
 import com.zs.itking.eventbusputvaluedemo.fragment.ThreeFragment;
 import com.zs.itking.eventbusputvaluedemo.fragment.TwoFragment;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity {
     private OneFragment oneFragment;
     private TwoFragment twoFragment;
     private ThreeFragment threeFragment;
+    private FourFragment fourFragment;
     private static Events.ActivityActivityMessage activityActivityMessage;
     private static Events.FragmentActivityMessage fragmentActivityMessage;
     ViewPager main_vp_content;
@@ -94,7 +96,7 @@ public class MainActivity extends BaseActivity {
         startActivity(new Intent(MainActivity.this, TwoActivity.class));
 
         /* 2.Activity传Fragment传值(MainActivity中的碎片) */
-        //addOneFragment(new Events.ActivityFragmentMessage("我是MainActivity传到OneFragment的数据"));
+        addOneFragment(new Events.ActivityFragmentMessage("我是MainActivity传到OneFragment的数据"));
         addTwoFragment(new Events.ActivityFragmentMessage("我是MainActivity传到TwoFragment的数据"));
 
     }
@@ -133,12 +135,28 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
+     * 向FourFragment传值
+     * @param globalBus 实体数据
+     */
+    private void addFourFragment(Events.ActivityFragmentMessage globalBus){
+        if(isFinishing()){
+            return;
+        }
+        if(fourFragment != null){
+            return;
+        }
+        fourFragment = fourFragment.newInstance();//在实例MyFragment时，便注册EventBus，保证在post前得到register
+//        getSupportFragmentManager().beginTransaction().replace(R.id.fl_show, fourFragment).commitAllowingStateLoss();
+        GlobalBus.getBus().post(globalBus);//向Fragment发送数据, 注意post操作应该放在MyFragment实例之后，即先register
+    }
+
+    /**
      * 初始化ViewPager，适配Fragment页面
      */
     private void initViewPager() {
         fragmentList = new ArrayList<>();
         //创建Fragment类型的数组，适配ViewPager，添加四个功能页
-        fragments = new Fragment[]{new OneFragment(),new OneFragment()};
+        fragments = new Fragment[]{new FourFragment()};
         fragmentList.addAll(Arrays.asList(fragments));
         //ViewPager设置MyAdapter适配器，遍历List<Fragment>集合，填充Fragment页面
         main_vp_content.setAdapter(new MyViewPagerAdapter(getSupportFragmentManager(), fragments, fragmentList));
@@ -193,5 +211,13 @@ public class MainActivity extends BaseActivity {
             intData = data;
             Toast.makeText(this, "TwoActivity："+ intData, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * 开始传值到ViewPager
+     * @param view
+     */
+    public void btn_four(View view) {
+        addFourFragment(new Events.ActivityFragmentMessage("我是MainActivity传到FourFragment的数据"));
     }
 }
