@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * created by on 2021/11/2
- * 描述：
+ * 描述：Fragment 与 Fragment 通过EventBus传值
  *
  * @author ZSAndroid
  * @create 2021-11-02-13:23
@@ -32,6 +33,7 @@ public class OneFragment extends Fragment {
 
     private AnyEventType myShop;
     private TextView tv_s;
+    private Button btn_one;
 
     public static OneFragment newInstance(){
         OneFragment fragment = new OneFragment();
@@ -55,6 +57,7 @@ public class OneFragment extends Fragment {
         Log.d(getClass().getName(), "fragment： onCreateView");
         View view = inflater.inflate(R.layout.fragment_one, container, false);
         tv_s = view.findViewById(R.id.tv_s);
+        btn_one = view.findViewById(R.id.btn_one);
         return view;
     }
 
@@ -63,12 +66,27 @@ public class OneFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Log.d(getClass().getName(), "fragment： onActivityCreate");
         initView();
+        initListener();
     }
+
 
     private void initView(){
         if(myShop != null){
-            tv_s.setText(myShop.getMsg());
+            tv_s.setText("第一个Fragment"+myShop.getMsg());
         }
+    }
+
+    /**
+     * 设置监听
+     */
+    private void initListener() {
+        //向TwoFragment传值
+        btn_one.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     /**
@@ -77,6 +95,7 @@ public class OneFragment extends Fragment {
      * 正确的做法：先接收数据，然后在onActivityCreated中，利用接收的数据去刷新UI
      * @param shop
      */
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent (AnyEventType shop) {
         if (shop != null) {
@@ -84,7 +103,6 @@ public class OneFragment extends Fragment {
             myShop = shop;
         }
     }
-
 
     @Override
     public void onDestroy() {

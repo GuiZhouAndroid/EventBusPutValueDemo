@@ -5,9 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activity.TwoActivity">
+    <TextView
+        android:id="@+id/tv_two_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/vp_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+
+
 </LinearLayout>

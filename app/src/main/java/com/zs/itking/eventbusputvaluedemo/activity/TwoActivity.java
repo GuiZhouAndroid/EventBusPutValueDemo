@@ -1,24 +1,17 @@
 package com.zs.itking.eventbusputvaluedemo.activity;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
-import com.zs.itking.eventbusputvaluedemo.base.AnyEventType;
-import com.zs.itking.eventbusputvaluedemo.adapter.MyViewPagerAdapter;
-import com.zs.itking.eventbusputvaluedemo.fragment.OneFragment;
+import com.zs.itking.eventbusputvaluedemo.MyShop;
 import com.zs.itking.eventbusputvaluedemo.R;
-import com.zs.itking.eventbusputvaluedemo.fragment.TwoFragment;
+import com.zs.itking.eventbusputvaluedemo.base.AnyEventType;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * created by on 2021/11/2
@@ -29,17 +22,10 @@ import java.util.List;
  */
 public class TwoActivity extends BaseActivity {
 
-    ViewPager mVp_content;
+    private static String data = "这是来自TwoActivity的返回数据";
 
-    /**
-     * 四个主功能Fragment界面
-     */
-    public Fragment[] fragments = null;
-    /**
-     * 声明Fragment集合，ViewPager适配器遍历绑定数组fragments
-     */
-    private List<Fragment> fragmentList;
-
+    TextView tv_two_text;
+    private static AnyEventType anyEventType;
     @Override
     public int bindLayout() {
         return R.layout.activity_two;
@@ -52,48 +38,26 @@ public class TwoActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        mVp_content = findViewById(R.id.vp_content);
+        tv_two_text = findViewById(R.id.tv_two_text);
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        initViewPager();
-    }
-
-    private void initViewPager() {
-        fragmentList = new ArrayList<>();
-        //创建Fragment类型的数组，适配ViewPager，添加四个功能页
-        fragments = new Fragment[]{new OneFragment(),new TwoFragment()};
-        fragmentList.addAll(Arrays.asList(fragments));
-        //ViewPager设置MyAdapter适配器，遍历List<Fragment>集合，填充Fragment页面
-
-        mVp_content.setAdapter(new MyViewPagerAdapter(getSupportFragmentManager(), fragments, fragmentList));
-        mVp_content.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            //选择新页面时调用
-            @Override
-            public void onPageSelected(int position) {
-                mVp_content.setCurrentItem(position);
-                //mBottomBar.selectTabAtPosition(position, true);
-            }
-
-            //当滚动状态改变时调用，用于发现用户何时开始拖动
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+        /* 1.本类实体对象数据库，设置到TextView上 */
+        if(anyEventType != null){
+            tv_two_text.setText(anyEventType.getMsg());
+        }
+        /* 2.TwoActivity向MainActivity发送串字符串文本数据 */
+        EventBus.getDefault().post(data);
     }
 
 
     @Subscribe(sticky = true)
     public void onEventMainThread(AnyEventType event) {
-        String msg = "收到了消息：" + event.getMsg();
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+        //接收MainActivity事件携带的实体数据，赋值给我本来的实体对象
+        if (event != null) {
+            anyEventType = event;
+        }
     }
 
 }
