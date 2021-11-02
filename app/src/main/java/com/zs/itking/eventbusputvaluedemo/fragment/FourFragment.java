@@ -18,6 +18,9 @@ import com.zs.itking.eventbusputvaluedemo.base.eventbus.GlobalBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * created by on 2021/11/2
  * 描述：
@@ -30,7 +33,7 @@ public class FourFragment extends Fragment {
     private Events.ActivityFragmentMessage activityFragmentMessage;
 
     private TextView tv_ss;
-
+    private String result;
     public static FourFragment newInstance(){
         FourFragment fragment = new FourFragment();
         GlobalBus.getBus().register(fragment);
@@ -46,6 +49,7 @@ public class FourFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_four, container, false);
         tv_ss = view.findViewById(R.id.tv_ss);
+        StartTime();
         return view;
     }
 
@@ -77,6 +81,22 @@ public class FourFragment extends Fragment {
         }
     }
 
+    public void StartTime() {
+        Timer timer=new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Bundle bundle=getArguments();
+                result=bundle.getString("Result");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        tv_ss.setText(result);
+                    }
+                });
+            }
+        },0,100);
+    }
 
     /**
      * 注销EventBus
