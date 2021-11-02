@@ -38,7 +38,7 @@ public class OneFragment extends Fragment {
 
     public static OneFragment newInstance(){
         OneFragment fragment = new OneFragment();
-        EventBus.getDefault().register(fragment);
+        GlobalBus.getBus().register(fragment);
         return fragment;
     }
 
@@ -88,7 +88,7 @@ public class OneFragment extends Fragment {
         }
         //设置TwoFragment传过来的值
         if(fragmentFragmentMessage != null){
-            tv_s.setText("TwoFragment："+fragmentFragmentMessage.getMessage());
+            tv_s.setText("OneFragment："+fragmentFragmentMessage.getMessage());
         }
     }
 
@@ -133,10 +133,20 @@ public class OneFragment extends Fragment {
         }
     }
 
+    /**
+     * 注销EventBus
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);//取消注册
+        GlobalBus.getBus().unregister(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //Unregister the Registered Event.
+        GlobalBus.getBus().unregister(this);
     }
 }
 

@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.zs.itking.eventbusputvaluedemo.base.eventbus.GlobalBus;
 
-import org.greenrobot.eventbus.EventBus;
-
 /**
  * created by on 2021/11/2
  * 描述：
@@ -17,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
  * @create 2021-11-02-14:28
  */
 public abstract class BaseActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,9 +62,21 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected abstract void initData(Bundle savedInstanceState);
 
+
+    /**
+     * 暂停时：注销EventBus
+     */
     @Override
-    public void onDestroy() {
+    protected void onStop() {
+        super.onStop();
+        GlobalBus.getBus().unregister(this);
+    }
+    /**
+     * 销毁时：注销EventBus
+     */
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);//取消注册
+        GlobalBus.getBus().unregister(this);
     }
 }

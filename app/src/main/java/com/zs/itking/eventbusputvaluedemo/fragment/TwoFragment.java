@@ -32,14 +32,13 @@ public class TwoFragment extends Fragment {
     private Events.ActivityFragmentMessage activityFragmentMessage;
     private Events.FragmentFragmentMessage fragmentFragmentMessage;
     private static Events.ActivityActivityMessage activityActivityMessage;
-
     private TextView tv_s;
     private OneFragment oneFragment;
+
     private Button btn_two;
     public static TwoFragment newInstance(){
         TwoFragment fragment = new TwoFragment();
-        EventBus.getDefault().register(fragment);
-        Log.d(fragment.getClass().getName(), "EventBus注册");
+        GlobalBus.getBus().register(fragment);
         return fragment;
     }
 
@@ -47,15 +46,9 @@ public class TwoFragment extends Fragment {
 
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(getClass().getName(), "fragment： onCreate");
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "fragment： onCreateView");
         View view = inflater.inflate(R.layout.fragment_two, container, false);
         tv_s = view.findViewById(R.id.tv_s);
         btn_two = view.findViewById(R.id.btn_two);
@@ -83,7 +76,6 @@ public class TwoFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(getClass().getName(), "fragment： onActivityCreate");
         initView();
     }
 
@@ -96,6 +88,13 @@ public class TwoFragment extends Fragment {
         if(fragmentFragmentMessage != null){
             tv_s.setText("TwoFragment："+fragmentFragmentMessage.getMessage());
         }
+//        if(activityFragmentMessage != null){
+//            tv_s.setText("OneFragment："+activityFragmentMessage.getMessage());
+//        }
+//        //设置TwoFragment传过来的值
+//        if(fragmentFragmentMessage != null){
+//            tv_s.setText("TwoFragment："+fragmentFragmentMessage.getMessage());
+//        }
     }
 
     /**
@@ -137,9 +136,19 @@ public class TwoFragment extends Fragment {
         }
     }
 
+    /**
+     * 注销EventBus
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);//取消注册
+        GlobalBus.getBus().unregister(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //Unregister the Registered Event.
+        GlobalBus.getBus().unregister(this);
     }
 }

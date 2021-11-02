@@ -3,6 +3,7 @@ package com.zs.itking.eventbusputvaluedemo.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import com.zs.itking.eventbusputvaluedemo.adapter.MyViewPagerAdapter;
 import com.zs.itking.eventbusputvaluedemo.base.eventbus.Events;
 import com.zs.itking.eventbusputvaluedemo.base.eventbus.GlobalBus;
 import com.zs.itking.eventbusputvaluedemo.fragment.OneFragment;
+import com.zs.itking.eventbusputvaluedemo.fragment.ThreeFragment;
 import com.zs.itking.eventbusputvaluedemo.fragment.TwoFragment;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -34,12 +36,13 @@ public class MainActivity extends BaseActivity {
 
     private OneFragment oneFragment;
     private TwoFragment twoFragment;
-
+    private ThreeFragment threeFragment;
     private static Events.ActivityActivityMessage activityActivityMessage;
-
+    private static Events.FragmentActivityMessage fragmentActivityMessage;
     ViewPager main_vp_content;
-    private TextView tv_one_return;
+    private TextView tv_one_return,tv_fragment_back_data;
     private static int intData;
+    private Button btn_bank_main;
     /**
      * 四个主功能Fragment界面
      */
@@ -63,6 +66,21 @@ public class MainActivity extends BaseActivity {
     protected void initView() {
         main_vp_content = findViewById(R.id.main_vp_content);
         tv_one_return = findViewById(R.id.tv_one_return);
+        tv_fragment_back_data = findViewById(R.id.tv_fragment_back_data);
+        btn_bank_main = findViewById(R.id.btn_bank_main);
+        btn_bank_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isFinishing()){
+                    return;
+                }
+                if(threeFragment != null){
+                    return;
+                }
+                threeFragment = ThreeFragment.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fl_show,threeFragment).commitAllowingStateLoss();
+            }
+        });
     }
 
     @Override
@@ -72,8 +90,8 @@ public class MainActivity extends BaseActivity {
 
     public void but(View view) {
         /* 1.Activity传Activity传值 */
-        startActivity(new Intent(MainActivity.this, TwoActivity.class));
         GlobalBus.getBus().postSticky(new Events.ActivityActivityMessage("我是MainActivity传到TwoActivity的数据"));
+        startActivity(new Intent(MainActivity.this, TwoActivity.class));
 
         /* 2.Activity传Fragment传值(MainActivity中的碎片) */
         //addOneFragment(new Events.ActivityFragmentMessage("我是MainActivity传到OneFragment的数据"));
@@ -157,6 +175,14 @@ public class MainActivity extends BaseActivity {
         if (message != null) {
             activityActivityMessage = message;
             tv_one_return.setText("MainActivity："+ activityActivityMessage.getMessage());
+        }
+    }
+
+    @Subscribe
+    public void getMessage(Events.FragmentActivityMessage message) {
+        if (message != null) {
+            fragmentActivityMessage = message;
+            tv_fragment_back_data.setText(fragmentActivityMessage.getMessage());
         }
     }
 
