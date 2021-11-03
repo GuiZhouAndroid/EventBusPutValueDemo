@@ -19,8 +19,6 @@ import org.greenrobot.eventbus.Subscribe;
  */
 public class TwoActivity extends BaseActivity {
 
-    private static String data = "我是TwoActivity传到MainActivity的数据";
-
     TextView tv_two_text;
 
     private static Events.ActivityActivityMessage activityActivityMessage;
@@ -46,7 +44,7 @@ public class TwoActivity extends BaseActivity {
             tv_two_text.setText(activityActivityMessage.getMessage());
         }
         /* 2.TwoActivity向MainActivity发送串字符串文本数据 */
-        GlobalBus.getBus().post(data);
+        GlobalBus.getBus().postSticky(new Events.ActivityActivityMessage("我是TwoActivity传到MainActivity的数据"));
     }
 
     /**

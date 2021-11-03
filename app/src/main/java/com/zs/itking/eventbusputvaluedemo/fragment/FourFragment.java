@@ -33,7 +33,7 @@ public class FourFragment extends Fragment {
     private Events.ActivityFragmentMessage activityFragmentMessage;
 
     private TextView tv_ss;
-    private String result;
+
     public static FourFragment newInstance(){
         FourFragment fragment = new FourFragment();
         GlobalBus.getBus().register(fragment);
@@ -49,7 +49,6 @@ public class FourFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_four, container, false);
         tv_ss = view.findViewById(R.id.tv_ss);
-        StartTime();
         return view;
     }
 
@@ -76,26 +75,10 @@ public class FourFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent (Events.ActivityFragmentMessage Message) {
+        //对象数据赋值给当前类
         if (Message != null) {
             activityFragmentMessage = Message;
         }
-    }
-
-    public void StartTime() {
-        Timer timer=new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Bundle bundle=getArguments();
-                result=bundle.getString("Result");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tv_ss.setText(result);
-                    }
-                });
-            }
-        },0,100);
     }
 
     /**

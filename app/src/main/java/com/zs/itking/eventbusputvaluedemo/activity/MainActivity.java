@@ -45,8 +45,6 @@ public class MainActivity extends BaseActivity {
     private TextView tv_one_return,tv_fragment_back_data;
     private static int intData;
     private Button btn_bank_main;
-
-    private Bundle bundle=new Bundle();
     /**
      * 四个主功能Fragment界面
      */
@@ -89,7 +87,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        initViewPager();
+        //Activity传递数据到ViewPager的Fragment中，使用EventBus未实现，此处注释，实现后再补充
+        //使用Bundle方式实现Activity传递数据到ViewPager的Fragment中：https://github.com/GuiZhouAndroid/BundleViewPagerDataToFragment
+        //initViewPager();
     }
 
     public void but(View view) {
@@ -114,7 +114,7 @@ public class MainActivity extends BaseActivity {
         if(oneFragment != null){
             return;
         }
-        oneFragment = oneFragment.newInstance();//在实例MyFragment时，便注册EventBus，保证在post前得到register
+        oneFragment = OneFragment.newInstance();//在实例MyFragment时，便注册EventBus，保证在post前得到register
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_show, oneFragment).commitAllowingStateLoss();
         GlobalBus.getBus().post(globalBus);//向Fragment发送数据, 注意post操作应该放在MyFragment实例之后，即先register
 
@@ -131,7 +131,7 @@ public class MainActivity extends BaseActivity {
         if(twoFragment != null){
             return;
         }
-        twoFragment = twoFragment.newInstance();//在实例MyFragment时，便注册EventBus，保证在post前得到register
+        twoFragment = TwoFragment.newInstance();//在实例MyFragment时，便注册EventBus，保证在post前得到register
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_show, twoFragment).commitAllowingStateLoss();
         GlobalBus.getBus().post(globalBus);//向Fragment发送数据, 注意post操作应该放在MyFragment实例之后，即先register
     }
@@ -147,9 +147,8 @@ public class MainActivity extends BaseActivity {
         if(fourFragment != null){
             return;
         }
-        fourFragment =  (FourFragment) Fragment.instantiate(this,FourFragment.class.getName());//在实例MyFragment时，便注册EventBus，保证在post前得到register
-//        getSupportFragmentManager().beginTransaction().replace(R.id.fl_show, fourFragment).commitAllowingStateLoss();
-        GlobalBus.getBus().postSticky(globalBus);//向Fragment发送数据, 注意post操作应该放在MyFragment实例之后，即先register
+        fourFragment = FourFragment.newInstance();//在实例MyFragment时，便注册EventBus，保证在post前得到register
+        GlobalBus.getBus().post(globalBus);//向Fragment发送数据, 注意post操作应该放在MyFragment实例之后，即先register
     }
 
     /**
@@ -158,8 +157,7 @@ public class MainActivity extends BaseActivity {
     private void initViewPager() {
         fragmentList = new ArrayList<>();
         //创建Fragment类型的数组，适配ViewPager，添加四个功能页
-        fragments = new Fragment[]{Fragment.instantiate(this,FourFragment.class.getName(),bundle)};
-//        fragments = new Fragment[]{Fragment.instantiate(this,FourFragment.class.getName())};
+        fragments = new Fragment[]{new OneFragment(),new TwoFragment(),new ThreeFragment(),new FourFragment()};
         fragmentList.addAll(Arrays.asList(fragments));
         //ViewPager设置MyAdapter适配器，遍历List<Fragment>集合，填充Fragment页面
         main_vp_content.setAdapter(new MyViewPagerAdapter(getSupportFragmentManager(), fragments, fragmentList));
@@ -221,7 +219,7 @@ public class MainActivity extends BaseActivity {
      * @param view
      */
     public void btn_four(View view) {
-        bundle.putString("Result","我是MainActivity传到FourFragment的数据");
-        //addFourFragment(new Events.ActivityFragmentMessage("我是MainActivity传到FourFragment的数据"));
+        Toast.makeText(this, "使用EventBus未实现", Toast.LENGTH_SHORT).show();
+        addFourFragment(new Events.ActivityFragmentMessage("我是MainActivity传到FourFragment的数据"));
     }
 }
